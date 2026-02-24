@@ -19,19 +19,19 @@ def get_all_internships() -> List[Internship]:
     # Column names based on user file:
     # ,Job Title,Job Type,Company Name,Posted Date,Cities,States,Stipend,Start Date,Duration,Numer of Openings,Late date to apply
     
-    internships = []
+internships = []
     
     for idx, row in df.iterrows():
         # Handle nan values gracefully
-        title = str(row.get("Job Title", "Unknown Role"))
-        company = str(row.get("Company Name", "Unknown Company"))
-        city = str(row.get("Cities", ""))
-        state = str(row.get("States", ""))
+        title = str(row.get("Job Title", "Unknown Role") if "Job Title" in row else "Unknown Role") if pd.notna(row.get("Job Title")) else "Unknown Role"
+        company = str(row.get("Company Name", "Unknown Company") if "Company Name" in row else "Unknown Company") if pd.notna(row.get("Company Name")) else "Unknown Company"
+        city = str(row.get("Cities", "") if "Cities" in row else "") if pd.notna(row.get("Cities")) else ""
+        state = str(row.get("States", "") if "States" in row else "") if pd.notna(row.get("States")) else ""
         location = f"{city}, {state}".strip(", ")
-        stipend = str(row.get("Stipend", "Unpaid"))
-        duration = str(row.get("Duration", "Not specified"))
-        start_date = str(row.get("Start Date", "Immediately"))
-        apply_by = str(row.get("Late date to apply", "ASAP"))
+        stipend = str(row.get("Stipend", "Unpaid") if "Stipend" in row else "Unpaid") if pd.notna(row.get("Stipend")) else "Unpaid"
+        duration = str(row.get("Duration", "Not specified") if "Duration" in row else "Not specified") if pd.notna(row.get("Duration")) else "Not specified"
+        start_date = str(row.get("Start Date", "Immediately") if "Start Date" in row else "Immediately") if pd.notna(row.get("Start Date")) else "Immediately"
+        apply_by = str(row.get("Late date to apply", "ASAP") if "Late date to apply" in row else "ASAP") if pd.notna(row.get("Late date to apply")) else "ASAP"
         
         # Create a synthetic description for matching since CSV has no description
         # We emphasize important keywords
