@@ -46,7 +46,7 @@ class InternshipRecommender:
             score = float(cosine_sim[idx])
             # simple threshold to avoid completely irrelevant results
             if score > 0.05: 
-                internship = self.internships[idx].copy()
+                internship = self.internships[idx].model_copy()
                 internship.match_score = round(score * 100, 1) # Convert to percentage
                 
                 # Identify matched keywords (basic intersection for demo)
