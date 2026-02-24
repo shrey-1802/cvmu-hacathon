@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from models import CandidateProfile, Internship
 from recommender import InternshipRecommender
@@ -9,11 +9,19 @@ app = FastAPI(title="Internship Recommender", version="1.0")
 
 # Initialize Recommender
 # Loading data might take a moment, so we do it on startup
-internships = get_all_internships()
+try:
+    internships = get_all_internships()
+except Exception as e:
+    print(f"Error loading internships: {e}")
+    internships = []
+
 recommender = InternshipRecommender()
 # Only fit if we have data
 if internships:
-    recommender.fit(internships)
+    try:
+        recommender.fit(internships)
+    except Exception as e:
+        print(f"Error fitting recommender: {e}")
 
 # CORS for frontend
 app.add_middleware(
@@ -33,10 +41,12 @@ def read_root():
 def recommend_internships(profile: CandidateProfile):
     if not internships:
         return []
-    recommendations = recommender.recommend(profile)
-    return recommendations
-
-from fastapi import File, UploadFile
+    try:
+        recommendations = recommender.recommend(profile)
+        return recommendations
+    except Exception as e:
+        print(f"Error generating recommendations: {e}")
+        return []
 
 @app.get("/internships", response_model=List[Internship])
 def get_all_internships_endpoint():
